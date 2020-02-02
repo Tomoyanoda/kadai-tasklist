@@ -1,31 +1,26 @@
 class TasksController < ApplicationController
+  before_action :require_user_logged_in
   before_action :correct_user, only: [:show, :edit, :update, :destroy]
 
   def index
-    if logged_in?
-      @tasks = current_user.tasks.order(id: :desc).page(params[:page]).per(8)
-    end
+    @tasks = current_user.tasks.order(id: :desc).page(params[:page]).per(8)
   end
 
   def show
   end
 
   def new
-    if logged_in?
-      @task = current_user.tasks.build #form_with 用
-    end
+    @task = current_user.tasks.build #form_with 用
   end
 
   def create
-    if logged_in?
-      @task = current_user.tasks.build(task_params)
-      if @task.save
-        flash[:success] = 'Task が正常に投稿されました'
-        redirect_to @task
-      else
-        flash.now[:danger] = 'Task が投稿されませんでした'
-        render :new
-      end
+    @task = current_user.tasks.build(task_params)
+    if @task.save
+      flash[:success] = 'Task が正常に投稿されました'
+      redirect_to @task
+    else
+      flash.now[:danger] = 'Task が投稿されませんでした'
+      render :new
     end
   end
 
